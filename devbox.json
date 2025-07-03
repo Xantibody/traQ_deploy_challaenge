@@ -1,20 +1,21 @@
 {
-    "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.2/.schema/devbox.schema.json",
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.2/.schema/devbox.schema.json",
   "packages": [
     "kubectl@1.33.1",
     "kubernetes-helm@latest",
     "k3d@latest",
-    "mysql@latest"
+    "mysql@latest",
+    "k9s@latest",
+    "kustomize@latest"
   ],
-    "shell": {
-      "init_hook": [
-        "echo 'Welcome to devbox!' > /dev/null"
-      ],
-      "scripts": {
-        "test": [
-          "echo \"Error: no test specified\" && exit 1"
-        ]
-      }
+  "shell": {
+    "init_hook": [
+      "echo 'Welcome to devbox!' > /dev/null"
+    ],
+    "scripts": {
+      "test": [
+        "echo \"Error: no test specified\" && exit 1"
+      ]
     }
   }
-  
+}

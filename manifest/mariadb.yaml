@@ -1,0 +1,39 @@
+# https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mariadb
+  namespace: traq
+spec:
+  selector:
+    matchLabels:
+      app: mariadb
+  serviceName: "mariadb"
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: mariadb
+      labels:
+        app: mariadb
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: mariadb
+          image: mariadb:lts-ubi9
+          ports:
+            - containerPort: 3306
+              name: mariadb
+          volumeMounts:
+            - name: db
+              mountPath: /var/lib/mysql/
+  volumeClaimTemplates:
+    - metadata:
+        name: db
+      spec:
+        storageClassName: local-path
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
