@@ -27,6 +27,12 @@ spec:
           volumeMounts:
             - name: db
               mountPath: /var/lib/mysql/
+          env:
+            - name: MARIADB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: password
   volumeClaimTemplates:
     - metadata:
         name: db
@@ -37,3 +43,19 @@ spec:
         resources:
           requests:
             storage: 1Gi
+---
+# https://kubernetes.io/docs/concepts/configuration/secret/
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mariadb-secret
+  namespace: traq
+type: Opaque
+data:
+  password: "password"
+  user: "user"
+
+# Example:
+# password: {{ .Values.password | b64enc }}
+---
+
