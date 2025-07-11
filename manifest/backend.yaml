@@ -1,0 +1,76 @@
+# https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: traq-backend
+  namespace: traq
+spec:
+  selector:
+    matchLabels:
+      app: traq-backend
+  serviceName: "traq-backend"
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: traq-backend
+      labels:
+        app: traq-backend
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: traq-backend
+          image: ghcr.io/traptitech/traq:latest
+          ports:
+            - containerPort: 80
+              name: traq-backend
+          volumeMounts:
+            - mountPath: /app/config.yml
+              name: foo
+              subPath: config.yml
+              readOnly: true
+      volumes:
+        - name: foo
+          configMap:
+            name: traq-backend-config
+  volumeClaimTemplates:
+    - metadata:
+        name: track-backend-data
+      spec:
+        storageClassName: local-path
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+---
+# https://kubernetes.io/docs/concepts/configuration/configmap/
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: traq-backend-config
+  namespace: traq
+data:
+  config.yml: |
+    origin: https://example.com
+    port: 3000
+    allowSignUp: true
+
+    mariadb:
+      host: mariadb
+      port: 3306
+      username: traq
+      password: password
+      database: traq
+
+    es:
+      url: http://es:9200
+      username: elastic
+      password: password
+
+    storage:
+      type: local
+      local:
+        dir: /app/storage
+---
+

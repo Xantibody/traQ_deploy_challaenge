@@ -32,6 +32,21 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: mariadb-secret
+                  key: root-password
+            - name: MARIADB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: user
+            - name: MARIADB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: database
+            - name: MARIADB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
                   key: password
   volumeClaimTemplates:
     - metadata:
@@ -52,10 +67,26 @@ metadata:
   namespace: traq
 type: Opaque
 data:
-  password: "password"
-  user: "user"
-
-# Example:
-# password: {{ .Values.password | b64enc }}
+  root-password: "cGFzc3dvcmQ="
+  database: "dHJhcQ=="
+  user: "dHJhcQ=="
+  password: "cGFzc3dvcmQ="
+---
+# https://kubernetes.io/docs/concepts/services-networking/service/
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb
+  namespace: traq
+  labels:
+    app: mariadb
+spec:
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+  selector:
+    app: mariadb
 ---
 

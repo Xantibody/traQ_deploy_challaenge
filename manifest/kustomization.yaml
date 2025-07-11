@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - ./mariadb.yaml
   - ./namespace.yaml
+  - ./backend.yaml
